@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Tienda</title>
+
+<link rel="icon" href="img/favicon.jpg">
+<link rel="stylesheet"
+href="css/tienda.css">
+
+</head>
+
+<body>
+
+<!-- HEADER -->
+
+<header class="header">
+
+<button
+class="inicio-btn"
+onclick="window.location.href='index.html'">
+
+Inicio
+
+</button>
+
+<h1>Repuestos Biker</h1>
+
+<!-- BUSCADOR -->
+
+<input
+type="text"
+id="buscador"
+placeholder="Buscar repuesto...">
+
+
+
+<!-- CARRITO -->
+
+<div
+class="carrito"
+onclick="abrirCarrito()">
+
+<img src="img/carrito logo.JPG">
+
+<span id="contador-carrito">
+0
+</span>
+
+</div>
+
+</header>
+
+<!-- PRODUCTOS -->
+
+<section
+class="contenedor-productos"
+id="contenedor-productos">
+
+</section>
+
+<!-- PAGINACIÓN -->
+
+<div class="paginacion">
+
+<button onclick="cambiarPagina(1)">
+1
+</button>
+
+<button onclick="cambiarPagina(2)">
+2
+</button>
+
+<button onclick="cambiarPagina(3)">
+3
+</button>
+
+<button onclick="cambiarPagina(4)">
+4
+</button>
+
+<button onclick="cambiarPagina(5)">
+5
+</button>
+
+</div>
+
+<!-- MODAL CARRITO -->
+
+<div
+class="modal-carrito"
+id="modal-carrito">
+
+<div class="contenido-carrito">
+
+<h2>Carrito</h2>
+
+<div id="lista-carrito">
+
+</div>
+
+<h3 id="total">
+Total: C$0
+</h3>
+
+<button onclick="generarFactura()">
+
+Generar Factura
+
+</button>
+
+<button onclick="comprar()">
+
+Comprar
+
+</button>
+
+<button onclick="cerrarCarrito()">
+
+Cerrar
+
+</button>
+
+</div>
+
+</div>
+
+<!-- MODAL IMAGEN -->
+
+<div
+class="modal-imagen"
+id="modal-imagen">
+
+<span
+class="cerrar-imagen"
+onclick="cerrarImagen()">
+
+X
+
+</span>
+
+<img id="imagen-grande">
+
+</div>
+
+<!-- NOTIFICACIÓN -->
+
+<div id="notificacion">
+
+Producto agregado al carrito
+
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/productos.js"></script>
+<script src="js/carrito.js"></script>
+<script src="js/ventas.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

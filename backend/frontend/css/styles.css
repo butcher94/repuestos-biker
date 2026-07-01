@@ -1,0 +1,168 @@
+/* ===== GENERAL ===== */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+
+  /* ===== FONDO ===== */
+
+  /* OPCIÓN 1: COLOR  background-color: #f4f4f4; /*  CAMBIA AQUÍ */
+
+  /* OPCIÓN 2: IMAGEN */
+  
+  background-image: url("../img/fondo2.jpeg"); /*  CAMBIA AQUÍ */
+
+ background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  
+  
+}
+
+/* ===== HEADER ===== */
+header {
+  background: #333;
+  color: white;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* ===== LOGO ===== */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* TAMAÑO DEL LOGO */
+.logo img {
+  width: 40px; /* CAMBIA EL TAMAÑO */
+  height: 40px;
+  object-fit: cover;
+  border-radius: 50%; /* opcional (redondo) */
+}
+
+nav a {
+  color: white;
+  margin-left: 15px;
+  text-decoration: none;
+}
+
+/* ===== HERO ===== */
+.hero{
+
+background:rgba(0,0,0,0.45);
+
+padding:60px;
+
+border-radius:20px;
+
+width:70%;
+
+margin:60px auto;
+
+text-align:center;
+
+color:white;
+
+backdrop-filter:blur(3px);
+
+}
+
+.hero h2{
+
+font-size:45px;
+
+margin-bottom:20px;
+
+text-shadow:3px 3px 8px black;
+
+}
+
+.hero p{
+
+font-size:22px;
+
+margin-bottom:30px;
+
+text-shadow:2px 2px 6px black;
+
+line-height:1.6;
+
+}
+
+/* ===== LOGIN ===== */
+.login-container {
+  width: 90%;
+  max-width: 350px;
+  margin: 50px auto;
+  text-align: center;
+  background: rgba(255,255,255,0.9);
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.login-container input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+}
+
+.login-container button {
+  padding: 12px;
+  width: 100%;
+  background: #5A5A5A;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+
+/* ===== FOOTER ===== */
+footer {
+  text-align: center;
+  padding: 20px;
+}
+
+/* ===== RESPONSIVE ===== */
+.btn{
+
+display:inline-block;
+
+margin-top:25px;
+
+padding:14px 28px;
+
+background:#0056d6;
+
+color:white;
+
+font-size:20px;
+
+font-weight:bold;
+
+text-decoration:none;
+
+border-radius:10px;
+
+border:2px solid white;
+
+box-shadow:0 4px 15px rgba(0,0,0,0.5);
+
+text-shadow:1px 1px 3px black;
+
+transition:0.3s;
+
+}
+
+.btn:hover{
+
+background:#003f9e;
+
+transform:scale(1.05);
+
+box-shadow:0 6px 20px rgba(0,0,0,0.7);
+
+}

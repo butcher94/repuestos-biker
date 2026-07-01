@@ -1,19 +1,37 @@
 require("dotenv").config();
+
 const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
+const path = require("path");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
+// ==========================
+// SERVIR FRONTEND
+// ==========================
+
+const path = require("path");
+
+app.use(express.static(path.join(__dirname, "frontend")));
+
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "frontend", "index.html"));
+});
+
+// ==========================
+// CONEXIÓN MYSQL
+// ==========================
+
 const conexion = mysql.createConnection({
 
     host: process.env.DB_HOST,
 
-    port: process.env.DB_PORT || 3306,
+    port: Number(process.env.DB_PORT) || 3306,
 
     user: process.env.DB_USER,
 
@@ -23,23 +41,34 @@ const conexion = mysql.createConnection({
 
 });
 
-conexion.connect((error)=>{
+conexion.connect((error) => {
 
-    if(error){
+    if (error) {
 
-        console.log(error);
+        console.error("Error al conectar con MySQL:");
+        console.error(error);
 
-    }else{
+    } else {
 
-        console.log("MySQL conectado");
+        console.log("====================================");
+        console.log("✅ MySQL conectado");
+        console.log("====================================");
 
     }
 
 });
 
-app.listen(process.env.PORT,()=>{
+// ==========================
+// INICIAR SERVIDOR
+// ==========================
 
-    console.log("Servidor corriendo");
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+
+    console.log("====================================");
+    console.log(`🚀 Servidor corriendo en el puerto ${PORT}`);
+    console.log("====================================");
 
 });
 
@@ -50,10 +79,14 @@ app.listen(process.env.PORT,()=>{
 app.get("/productos",(req,res)=>{
 
     conexion.query(
+
         "SELECT * FROM productos",
+
         (error,resultados)=>{
 
             if(error){
+
+                console.error(error);
 
                 return res.status(500).json(error);
 
@@ -62,6 +95,7 @@ app.get("/productos",(req,res)=>{
             res.json(resultados);
 
         }
+
     );
 
 });
@@ -79,18 +113,28 @@ app.post("/productos",(req,res)=>{
         VALUES (?,?,?)
         `,
 
-        [nombre,precio,imagen],
+        [
+
+            nombre,
+            precio,
+            imagen
+
+        ],
 
         (error)=>{
 
             if(error){
+
+                console.error(error);
 
                 return res.status(500).json(error);
 
             }
 
             res.json({
+
                 mensaje:"Producto agregado"
+
             });
 
         }
@@ -98,6 +142,7 @@ app.post("/productos",(req,res)=>{
     );
 
 });
+
 
 app.put("/productos/:id",(req,res)=>{
 
@@ -107,29 +152,36 @@ app.put("/productos/:id",(req,res)=>{
 
         `
         UPDATE productos
-        SET nombre=?,
-        precio=?,
-        imagen=?
+        SET
+            nombre=?,
+            precio=?,
+            imagen=?
         WHERE id=?
         `,
 
         [
+
             nombre,
             precio,
             imagen,
             req.params.id
+
         ],
 
         (error)=>{
 
             if(error){
 
+                console.error(error);
+
                 return res.status(500).json(error);
 
             }
 
             res.json({
+
                 mensaje:"Producto actualizado"
+
             });
 
         }
@@ -145,18 +197,26 @@ app.delete("/productos/:id",(req,res)=>{
 
         "DELETE FROM productos WHERE id=?",
 
-        [req.params.id],
+        [
+
+            req.params.id
+
+        ],
 
         (error)=>{
 
             if(error){
+
+                console.error(error);
 
                 return res.status(500).json(error);
 
             }
 
             res.json({
+
                 mensaje:"Producto eliminado"
+
             });
 
         }
@@ -173,21 +233,34 @@ app.delete("/productos/:id",(req,res)=>{
 app.get("/carrito",(req,res)=>{
 
     const sql = `
+
     SELECT
+
         carrito.id,
+
         productos.id AS producto_id,
+
         productos.nombre,
+
         productos.precio,
+
         productos.imagen,
+
         carrito.cantidad
+
     FROM carrito
+
     INNER JOIN productos
-    ON carrito.producto_id = productos.id
+
+        ON carrito.producto_id = productos.id
+
     `;
 
     conexion.query(sql,(error,resultados)=>{
 
         if(error){
+
+            console.error(error);
 
             return res.status(500).json(error);
 
@@ -208,16 +281,22 @@ app.post("/carrito",(req,res)=>{
     const { producto_id } = req.body;
 
     const sqlBuscar = `
-    SELECT * FROM carrito
+    SELECT *
+    FROM carrito
     WHERE producto_id = ?
     `;
 
     conexion.query(
+
         sqlBuscar,
+
         [producto_id],
+
         (error,resultados)=>{
 
             if(error){
+
+                console.error(error);
 
                 return res.status(500).json(error);
 
@@ -226,58 +305,79 @@ app.post("/carrito",(req,res)=>{
             if(resultados.length > 0){
 
                 conexion.query(
+
                     `
                     UPDATE carrito
                     SET cantidad = cantidad + 1
                     WHERE producto_id = ?
                     `,
+
                     [producto_id],
+
                     (error)=>{
 
                         if(error){
+
+                            console.error(error);
 
                             return res.status(500).json(error);
 
                         }
 
                         res.json({
+
                             mensaje:"Cantidad actualizada"
+
                         });
 
                     }
+
                 );
 
             }else{
 
                 conexion.query(
+
                     `
                     INSERT INTO carrito
                     (producto_id,cantidad)
                     VALUES (?,1)
                     `,
+
                     [producto_id],
+
                     (error)=>{
 
                         if(error){
+
+                            console.error(error);
 
                             return res.status(500).json(error);
 
                         }
 
                         res.json({
+
                             mensaje:"Producto agregado"
+
                         });
 
                     }
+
                 );
 
             }
 
         }
+
     );
 
 });
 
+
+// ==========================
+// RESTAR CANTIDAD
+// ==========================
 
 app.put("/carrito/restar/:id",(req,res)=>{
 
@@ -296,12 +396,16 @@ app.put("/carrito/restar/:id",(req,res)=>{
 
             if(error){
 
+                console.error(error);
+
                 return res.status(500).json(error);
 
             }
 
             res.json({
+
                 mensaje:"Cantidad disminuida"
+
             });
 
         }
@@ -309,6 +413,11 @@ app.put("/carrito/restar/:id",(req,res)=>{
     );
 
 });
+
+
+// ==========================
+// SUMAR CANTIDAD
+// ==========================
 
 app.put("/carrito/sumar/:id",(req,res)=>{
 
@@ -326,12 +435,16 @@ app.put("/carrito/sumar/:id",(req,res)=>{
 
             if(error){
 
+                console.error(error);
+
                 return res.status(500).json(error);
 
             }
 
             res.json({
+
                 mensaje:"Cantidad aumentada"
+
             });
 
         }
@@ -340,6 +453,7 @@ app.put("/carrito/sumar/:id",(req,res)=>{
 
 });
 
+
 // ==========================
 // ELIMINAR DEL CARRITO
 // ==========================
@@ -347,21 +461,29 @@ app.put("/carrito/sumar/:id",(req,res)=>{
 app.delete("/carrito/:id",(req,res)=>{
 
     conexion.query(
+
         "DELETE FROM carrito WHERE id = ?",
+
         [req.params.id],
+
         (error)=>{
 
             if(error){
+
+                console.error(error);
 
                 return res.status(500).json(error);
 
             }
 
             res.json({
+
                 mensaje:"Producto eliminado"
+
             });
 
         }
+
     );
 
 });
@@ -381,6 +503,8 @@ app.get("/ventas",(req,res)=>{
 
             if(error){
 
+                console.error(error);
+
                 return res.status(500).json(error);
 
             }
@@ -393,7 +517,6 @@ app.get("/ventas",(req,res)=>{
 
 });
 
-
 // ==========================
 // REALIZAR COMPRA
 // ==========================
@@ -403,18 +526,26 @@ app.post("/comprar",(req,res)=>{
     const sql = `
 
     SELECT
+
         productos.nombre,
+
         carrito.cantidad,
+
         productos.precio
+
     FROM carrito
+
     INNER JOIN productos
-    ON carrito.producto_id = productos.id
+
+        ON carrito.producto_id = productos.id
 
     `;
 
     conexion.query(sql,(error,productos)=>{
 
         if(error){
+
+            console.error(error);
 
             return res.status(500).json(error);
 
@@ -423,7 +554,9 @@ app.post("/comprar",(req,res)=>{
         if(productos.length===0){
 
             return res.json({
+
                 mensaje:"Carrito vacío"
+
             });
 
         }
@@ -443,7 +576,9 @@ app.post("/comprar",(req,res)=>{
                 [
 
                     producto.nombre,
+
                     producto.cantidad,
+
                     producto.precio
 
                 ],
@@ -451,6 +586,8 @@ app.post("/comprar",(req,res)=>{
                 (error)=>{
 
                     if(error){
+
+                        console.error(error);
 
                         return res.status(500).json(error);
 
@@ -464,7 +601,15 @@ app.post("/comprar",(req,res)=>{
 
                             "DELETE FROM carrito",
 
-                            ()=>{
+                            (error)=>{
+
+                                if(error){
+
+                                    console.error(error);
+
+                                    return res.status(500).json(error);
+
+                                }
 
                                 res.json({
 
@@ -489,10 +634,6 @@ app.post("/comprar",(req,res)=>{
 });
 
 
-
-
-
-
 // ==========================
 // PERSONAL
 // ==========================
@@ -506,7 +647,11 @@ app.get("/personal",(req,res)=>{
         (error,resultados)=>{
 
             if(error){
+
+                console.error(error);
+
                 return res.status(500).json(error);
+
             }
 
             res.json(resultados);
@@ -516,6 +661,7 @@ app.get("/personal",(req,res)=>{
     );
 
 });
+
 
 app.post("/personal",(req,res)=>{
 
@@ -529,16 +675,26 @@ app.post("/personal",(req,res)=>{
         VALUES (?)
         `,
 
-        [nombre],
+        [
+
+            nombre
+
+        ],
 
         (error)=>{
 
             if(error){
+
+                console.error(error);
+
                 return res.status(500).json(error);
+
             }
 
             res.json({
+
                 mensaje:"Empleado agregado"
+
             });
 
         }
@@ -546,6 +702,7 @@ app.post("/personal",(req,res)=>{
     );
 
 });
+
 
 app.put("/personal/:id",(req,res)=>{
 
@@ -559,16 +716,28 @@ app.put("/personal/:id",(req,res)=>{
         WHERE id=?
         `,
 
-        [nombre,req.params.id],
+        [
+
+            nombre,
+
+            req.params.id
+
+        ],
 
         (error)=>{
 
             if(error){
+
+                console.error(error);
+
                 return res.status(500).json(error);
+
             }
 
             res.json({
+
                 mensaje:"Empleado actualizado"
+
             });
 
         }
@@ -576,6 +745,7 @@ app.put("/personal/:id",(req,res)=>{
     );
 
 });
+
 
 app.delete("/personal/:id",(req,res)=>{
 
@@ -583,16 +753,26 @@ app.delete("/personal/:id",(req,res)=>{
 
         "DELETE FROM personal WHERE id=?",
 
-        [req.params.id],
+        [
+
+            req.params.id
+
+        ],
 
         (error)=>{
 
             if(error){
+
+                console.error(error);
+
                 return res.status(500).json(error);
+
             }
 
             res.json({
+
                 mensaje:"Empleado eliminado"
+
             });
 
         }
@@ -600,7 +780,6 @@ app.delete("/personal/:id",(req,res)=>{
     );
 
 });
-
 
 // ==========================
 // PROVEEDORES
@@ -615,7 +794,11 @@ app.get("/proveedores",(req,res)=>{
         (error,resultados)=>{
 
             if(error){
+
+                console.error(error);
+
                 return res.status(500).json(error);
+
             }
 
             res.json(resultados);
@@ -625,6 +808,7 @@ app.get("/proveedores",(req,res)=>{
     );
 
 });
+
 
 app.post("/proveedores",(req,res)=>{
 
@@ -638,16 +822,27 @@ app.post("/proveedores",(req,res)=>{
         VALUES (?,?)
         `,
 
-        [nombre,producto],
+        [
+
+            nombre,
+            producto
+
+        ],
 
         (error)=>{
 
             if(error){
+
+                console.error(error);
+
                 return res.status(500).json(error);
+
             }
 
             res.json({
+
                 mensaje:"Proveedor agregado"
+
             });
 
         }
@@ -655,6 +850,7 @@ app.post("/proveedores",(req,res)=>{
     );
 
 });
+
 
 app.put("/proveedores/:id",(req,res)=>{
 
@@ -664,21 +860,34 @@ app.put("/proveedores/:id",(req,res)=>{
 
         `
         UPDATE proveedores
-        SET nombre=?,
-        producto=?
+        SET
+            nombre=?,
+            producto=?
         WHERE id=?
         `,
 
-        [nombre,producto,req.params.id],
+        [
+
+            nombre,
+            producto,
+            req.params.id
+
+        ],
 
         (error)=>{
 
             if(error){
+
+                console.error(error);
+
                 return res.status(500).json(error);
+
             }
 
             res.json({
+
                 mensaje:"Proveedor actualizado"
+
             });
 
         }
@@ -687,22 +896,33 @@ app.put("/proveedores/:id",(req,res)=>{
 
 });
 
+
 app.delete("/proveedores/:id",(req,res)=>{
 
     conexion.query(
 
         "DELETE FROM proveedores WHERE id=?",
 
-        [req.params.id],
+        [
+
+            req.params.id
+
+        ],
 
         (error)=>{
 
             if(error){
+
+                console.error(error);
+
                 return res.status(500).json(error);
+
             }
 
             res.json({
+
                 mensaje:"Proveedor eliminado"
+
             });
 
         }
@@ -722,16 +942,26 @@ app.delete("/ventas/:id",(req,res)=>{
 
         "DELETE FROM ventas WHERE id=?",
 
-        [req.params.id],
+        [
+
+            req.params.id
+
+        ],
 
         (error)=>{
 
             if(error){
+
+                console.error(error);
+
                 return res.status(500).json(error);
+
             }
 
             res.json({
+
                 mensaje:"Venta eliminada"
+
             });
 
         }
@@ -739,7 +969,6 @@ app.delete("/ventas/:id",(req,res)=>{
     );
 
 });
-
 
 
 // ==========================
@@ -758,6 +987,8 @@ app.get("/usuarios",(req,res)=>{
 
             if(error){
 
+                console.error(error);
+
                 return res.status(500).json(error);
 
             }
@@ -770,8 +1001,9 @@ app.get("/usuarios",(req,res)=>{
 
 });
 
-
+// ==========================
 // AGREGAR USUARIO
+// ==========================
 
 app.post("/usuarios", async (req,res)=>{
 
@@ -785,12 +1017,7 @@ app.post("/usuarios", async (req,res)=>{
 
     try{
 
-        const passwordHash =
-        await bcrypt.hash(password,10);
-
-        console.log("Contraseña original:", password);
-
-        console.log("Hash generado:", passwordHash);
+        const passwordHash = await bcrypt.hash(password,10);
 
         conexion.query(
 
@@ -812,6 +1039,8 @@ app.post("/usuarios", async (req,res)=>{
 
                 if(error){
 
+                    console.error(error);
+
                     return res.status(500).json(error);
 
                 }
@@ -830,13 +1059,18 @@ app.post("/usuarios", async (req,res)=>{
 
     catch(error){
 
+        console.error(error);
+
         res.status(500).json(error);
 
     }
 
 });
 
+
+// ==========================
 // ACTUALIZAR USUARIO
+// ==========================
 
 app.put("/usuarios/:id", async (req,res)=>{
 
@@ -850,17 +1084,16 @@ app.put("/usuarios/:id", async (req,res)=>{
 
     try{
 
-        const passwordHash =
-        await bcrypt.hash(password,10);
+        const passwordHash = await bcrypt.hash(password,10);
 
         conexion.query(
 
             `
             UPDATE usuarios
             SET
-            nombre=?,
-            email=?,
-            password=?
+                nombre=?,
+                email=?,
+                password=?
             WHERE id=?
             `,
 
@@ -876,6 +1109,8 @@ app.put("/usuarios/:id", async (req,res)=>{
             (error)=>{
 
                 if(error){
+
+                    console.error(error);
 
                     return res.status(500).json(error);
 
@@ -895,12 +1130,18 @@ app.put("/usuarios/:id", async (req,res)=>{
 
     catch(error){
 
+        console.error(error);
+
         res.status(500).json(error);
 
     }
 
 });
+
+
+// ==========================
 // ELIMINAR USUARIO
+// ==========================
 
 app.delete("/usuarios/:id",(req,res)=>{
 
@@ -908,11 +1149,17 @@ app.delete("/usuarios/:id",(req,res)=>{
 
         "DELETE FROM usuarios WHERE id=?",
 
-        [req.params.id],
+        [
+
+            req.params.id
+
+        ],
 
         (error)=>{
 
             if(error){
+
+                console.error(error);
 
                 return res.status(500).json(error);
 
@@ -929,6 +1176,7 @@ app.delete("/usuarios/:id",(req,res)=>{
     );
 
 });
+
 
 // ==========================
 // LOGIN
@@ -962,6 +1210,8 @@ app.post("/login",(req,res)=>{
         async(error,resultados)=>{
 
             if(error){
+
+                console.error(error);
 
                 return res.status(500).json(error);
 

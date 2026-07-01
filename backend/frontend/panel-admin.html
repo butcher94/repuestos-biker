@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Panel Administrador</title>
+
+<link rel="stylesheet"
+href="css/tienda.css">
+
+</head>
+
+<body>
+
+<!-- BOTON ARRIBA -->
+
+<div class="volver-top">
+
+<button
+class="volver-btn"
+onclick="window.location.href='tienda.html'">
+
+Volver a Tienda
+
+</button>
+
+</div>
+
+<h1 class="titulo-admin">
+
+Panel Administrador
+
+</h1>
+
+<!-- CONTENEDOR -->
+
+<div class="contenedor-admin">
+
+<!-- PRODUCTOS -->
+
+<div class="admin-card productos-card">
+
+<h2>Agregar Productos</h2>
+
+<!-- BUSCADOR -->
+
+<input
+type="text"
+id="buscarAdmin"
+placeholder="Buscar repuesto..."
+onkeyup="buscarProductosAdmin()">
+
+<!-- FORM -->
+
+<input
+type="text"
+id="nombre"
+placeholder="Nombre producto">
+
+<input
+type="number"
+id="precio"
+placeholder="Precio">
+
+<input
+type="file"
+id="imagenFile"
+accept="image/*">
+
+<button onclick="agregarProductoAdmin()">
+
+Guardar Producto
+
+</button>
+
+<!-- TABLA -->
+
+<div class="tabla-productos-admin">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Imagen</th>
+<th>Nombre</th>
+<th>Precio</th>
+<th>Acciones</th>
+
+</tr>
+
+</thead>
+
+<tbody id="lista-productos-admin">
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<!-- COLUMNA DERECHA -->
+
+<div class="columna-derecha">
+
+<!-- VENDIDOS -->
+
+<div class="admin-card">
+
+<h2>Productos Vendidos</h2>
+
+<div id="productos-vendidos">
+
+</div>
+
+</div>
+
+<!-- PERSONAL -->
+
+<div class="admin-card">
+
+<h2>Personal Trabajo</h2>
+
+<input
+type="text"
+id="personalInput"
+placeholder="Nombre empleado">
+
+<button onclick="agregarPersonal()">
+
+Agregar Personal
+
+</button>
+
+<div id="lista-personal">
+
+</div>
+
+</div>
+
+<!-- USUARIOS -->
+
+<!-- USUARIOS -->
+
+<div class="admin-card">
+
+<h2>Usuarios</h2>
+
+<input
+type="text"
+id="usuarioInput"
+placeholder="Nombre usuario">
+
+<input
+type="email"
+id="emailInput"
+placeholder="Correo electrónico">
+
+<input
+type="password"
+id="passwordInput"
+placeholder="Contraseña">
+
+<button onclick="agregarUsuario()">
+
+Guardar Usuario
+
+</button>
+
+<div id="lista-usuarios">
+
+</div>
+
+</div>
+
+<!-- PROVEEDORES -->
+
+<div class="admin-card">
+
+<h2>Proveedores</h2>
+
+<input
+type="text"
+id="proveedorInput"
+placeholder="Proveedor">
+
+<input
+type="text"
+id="productoProveedor"
+placeholder="Qué vende">
+
+<button onclick="agregarProveedor()">
+
+Agregar Proveedor
+
+</button>
+
+<div id="lista-proveedores">
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/productos.js"></script>
+<script src="js/admin.js"></script>
+<script src="js/usuarios.js"></script>
+<script src="js/proveedores.js"></script>
+<script src="js/personal.js"></script>
+<script src="js/ventas.js"></script>
+<script src="js/seguridad.js"></script>
+
+</body>
+</html>

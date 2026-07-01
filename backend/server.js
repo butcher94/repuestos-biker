@@ -15,7 +15,6 @@ app.use(express.json());
 // SERVIR FRONTEND
 // ==========================
 
-const path = require("path");
 
 app.use(express.static(path.join(__dirname, "frontend")));
 
